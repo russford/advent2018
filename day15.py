@@ -11,9 +11,6 @@ class Map (object):
     def __setitem__(self, key, value):
         self.grid[key[0]+key[1]*self.width] = value
 
-    def at (self, x, y):
-        return self.grid[x+y*self.width]
-
     def load_chars (self, chars):
         self.char_dict = { (c.x, c.y):c for c in chars }
 
@@ -63,16 +60,47 @@ class Character (object):
     def __repr__(self):
         return "{}: {} ({}, {}) {}".format(self.id, self.char, self.x, self.y, self.hp)
 
-with open("day15test.txt", "r") as f:
-    data = f.read().splitlines()
-chars = []
-w = len(data[0])
-for i, line in enumerate(data):
-    for j, c in enumerate(line):
-        if c in "EG":
-            chars.append(Character(c, j, i))
-m = Map(data, chars)
+def load_map (filename):
+    with open(filename, "r") as f:
+        data = f.read().splitlines()
+    chars = []
+    w = len(data[0])
+    for i, line in enumerate(data):
+        for j, c in enumerate(line):
+            if c in "EG":
+                chars.append(Character(c, j, i))
+    return Map(data, chars), chars
 
+
+m, chars = load_map ("day15test.txt")
 m.print()
 m.build_regions(chars)
 m.print(True)
+
+while True:
+    chars.sort (key = lambda c: (c.y, c.x))
+    for c in chars:
+        targets = [c2 for c2 in chars if c2.char != c.char]
+        if not targets:
+            break
+        target_squares = set ()
+        # is unit in range of a target?
+        #   find first target in reading order (targets is already sorted)
+        #   attack
+        # else
+        #   make a list of all squares in range of a target and not occupied
+        #   find the one that is closest
+        #       start at current position
+        #       make a list of squares adjacent to current position
+        #       loop:
+        #           check boundary to see if any of the target candidate squares are in the list
+        #           if so, use the reading order sorted first one
+        #           if not, walk outwards by 1 step and repeat
+        #           check to see if more squares are being added, and if not, just stop - this unit can't do anything
+        #   if there is a closest unit
+        #       if it's in range, attack
+        #       otherwise, take 1 step in that direction
+        if check_attack (c, map):
+
+
+    break

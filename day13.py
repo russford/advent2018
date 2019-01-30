@@ -31,7 +31,7 @@ class Pos (object):
         return self.x == other.x and self.y == other.y
 
     def __lt__(self, other):
-        return (self.x, self.y) < (other.x, other.y)
+        return (self.y, self.x) < (other.y, other.x)
 
 class Cart (object):
     id = 1
